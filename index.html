@@ -142,10 +142,20 @@
     .sidebar-phone {
       margin-bottom: auto;
       font-size: 0.95rem;
-      color: #444;
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .phone-link {
+      color: #444;
+      text-decoration: none;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .phone-link:hover {
+      color: var(--accent);
     }
 
     .btn-login {
@@ -168,6 +178,9 @@
       color: #333;
       font-weight: bold;
       cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
     }
 
     .overlay {
@@ -421,6 +434,17 @@
       font-size: 0.9rem;
     }
 
+    .footer-phone-link {
+      color: #fff;
+      text-decoration: none;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .footer-phone-link:hover {
+      color: var(--primary);
+    }
+
     .fb-btn {
       display: inline-flex;
       align-items: center;
@@ -463,9 +487,12 @@
   <div class="sidebar" id="sidebar">
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     <input type="text" class="search-input" placeholder="...Search">
-    <div class="sidebar-phone">📞 +201066106283</div>
+    <div class="sidebar-phone">
+      📞 <a href="tel:+201066106283" class="phone-link">+201066106283</a>
+    </div>
     <button class="btn-login" id="btn-login-sidebar" onclick="openLoginModal()">تسجيل الدخول</button>
-    <button class="btn-contact" onclick="showToast('يرجى التواصل معنا عبر الهاتف أو الفيسبوك لتحديد التفاصيل')">تواصل معنا</button>
+    <!-- تم تعديل زر تواصل معنا ليفتح واتساب مباشرة -->
+    <a href="https://wa.me/201066106283?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D9%85%D8%B9%D9%83%D9%85%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D8%A7%D9%84%D8%B2%D9%87%D9%88%D8%B1" target="_blank" class="btn-contact">تواصل معنا</a>
   </div>
 
   <!-- نافذة تسجيل الدخول المنبثقة -->
@@ -603,8 +630,8 @@
     <div style="background-color: #fff3f5; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid var(--primary-dark);">
       <p style="font-size: 0.85rem; color: #333; margin-bottom: 5px;"><strong>🚚 التوصيل:</strong> بالنسبة للتوصيل، يرجى التواصل معنا لتأكيد الموعد والعنوان.</p>
       <p style="font-size: 0.85rem; color: #333;"><strong>💳 معلومات الدفع:</strong></p>
-      <p style="font-size: 0.8rem; color: #555;">• فودافون كاش (Vodafone Cash): 01066106283</p>
-      <p style="font-size: 0.8rem; color: #555;">• إنستا باي (InstaPay): 0114928996</p>
+      <p style="font-size: 0.8rem; color: #555;">• فودافون كاش (Vodafone Cash): <a href="tel:+201066106283" style="color:#333;">01066106283</a></p>
+      <p style="font-size: 0.8rem; color: #555;">• إنستا باي (InstaPay): <a href="tel:+20114928996" style="color:#333;">0114928996</a></p>
     </div>
 
     <button class="btn-pink" onclick="processOrder()">تأكيد ›</button>
@@ -628,8 +655,8 @@
 
   <!-- الفوتر الموحد -->
   <footer>
-    <p>201066106283+ 📞</p>
-    <p>magedhassan910@gmail.com ✉</p>
+    <p>📞 <a href="tel:+201066106283" class="footer-phone-link">+201066106283</a></p>
+    <p>✉ magedhassan910@gmail.com</p>
     <a href="https://www.facebook.com/FlowershopEg?mibextid=ZbWKwL" target="_blank" class="fb-btn">f</a>
     <p style="margin-top: 15px; font-size: 0.8rem; color: #aaa;">العَرَبِيّة | English (US)</p>
     <p style="font-size: 0.75rem; color: #888;">حقوق الطبع والنشر © flowershop</p>
@@ -922,5 +949,5 @@
     loadSavedAddress();
   </script>
 
-</body>
+</body> 
 </html>
