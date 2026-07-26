@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متجر الزهور - Flower Shop</title>
+  <style>
+    /* ----- المتغيرات والأساسيات ----- */
+    :root {
+      --primary: #f8d7da;
+      --primary-dark: #e0a3ad;
+      --accent: #e91e63;
+      --bg-color: #ffffff;
+      --card-bg: #fff;
+      --text-main: #333;
+      --footer-bg: #22120c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding-bottom: 20px;
+    }
+
+    /* ----- إشعار Toast احترافي ----- */
+    .toast-notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #ffffff;
+      color: #333333;
+      padding: 12px 24px;
+      border-radius: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      pointer-events: none;
+    }
+
+    .toast-notification.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ----- الهيدر وشريط الملاحة ----- */
+    header {
+      background-color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-right, .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      right: -8px;
+      background-color: var(--primary);
+      color: #333;
+      font-size: 0.75rem;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+
+    .logo img {
+      height: 35px;
+      border-radius: 50%;
+    }
+
+    /* ----- القائمة الجانبية (Sidebar) ----- */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100%;
+      background-color: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      z-index: 200;
+      transition: 0.3s ease;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.open {
+      right: 0;
+    }
+
+    .sidebar-close {
+      align-self: flex-start;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: 1px solid #eee;
+      background-color: #f5f5f5;
+      margin-bottom: 20px;
+    }
+
+    .sidebar-phone {
+      margin-bottom: auto;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .phone-link {
+      color: #444;
+      text-decoration: none;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .phone-link:hover {
+      color: var(--accent);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      background: #fff;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-contact {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      background-color: var(--primary);
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 150;
+      display: none;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    /* ----- نافذة تسجيل الدخول (Login Modal) ----- */
+    .modal-login {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: #fff;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      z-index: 300;
+      width: 90%;
+      max-width: 380px;
+      display: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .modal-login.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #777;
+    }
+
+    /* ----- أقسام التصفية ----- */
+    .categories {
+      display: flex;
+      gap: 10px;
+      padding: 15px 20px;
+      overflow-x: auto;
+    }
+
+    .cat-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1px solid #eee;
+      background-color: #f5f5f5;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 0.9rem;
+    }
+
+    .cat-btn.active {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+
+    /* ----- شبكة المنتجات ----- */
+    .view-section {
+      display: none;
+      padding: 0 15px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .product-card {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .product-card h4 {
+      font-size: 0.95rem;
+      margin-top: 8px;
+      font-weight: normal;
+    }
+
+    .product-card .price {
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    /* ----- تفاصيل المنتج ----- */
+    .product-detail-img {
+      width: 100%;
+      border-radius: 12px;
+      max-height: 350px;
+      object-fit: cover;
+    }
+
+    .detail-title {
+      font-size: 1.4rem;
+      margin: 15px 0 5px;
+      text-align: center;
+    }
+
+    .detail-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .qty-picker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      width: 120px;
+      margin: 0 auto 15px;
+    }
+
+    .qty-picker button {
+      border: none;
+      background: none;
+      padding: 8px 15px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .btn-pink {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      border: none;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .btn-outline-pink {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--primary-dark);
+      border-radius: 20px;
+      font-size: 0.95rem;
+      color: #e91e63;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    /* ----- عربة التسوق ----- */
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .cart-item img {
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .cart-summary {
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      margin-top: 15px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    /* ----- النماذج والمدخلات ----- */
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* ----- الفوتر ----- */
+    footer {
+      background-color: var(--footer-bg);
+      color: #fff;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    footer p {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .footer-phone-link {
+      color: #fff;
+      text-decoration: none;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .footer-phone-link:hover {
+      color: var(--primary);
+    }
+
+    .fb-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: #fff;
+      color: #1877f2;
+      border-radius: 50%;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .breadcrumb span.active {
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- عنصر الإشعار المنبثق التلقائي -->
+  <div id="toast" class="toast-notification">
+    <span style="font-size: 1.2rem;">🌸</span>
+    <span id="toast-text">تم تسجيل الدخول بنجاح!</span>
+  </div>
+
+  <!-- القائمة الجانبية والخلفية المظلمة -->
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    <input type="text" class="search-input" placeholder="...Search">
+    <div class="sidebar-phone">
+      📞 <a href="tel:+201100606022" class="phone-link">+201100606022</a>
+    </div>
+    <button class="btn-login" id="btn-login-sidebar" onclick="openLoginModal()">تسجيل الدخول</button>
+    <a href="https://wa.me/201100606022?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D9%85%D8%B9%D9%83%D9%85%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D8%A7%D9%84%D8%B2%D9%87%D9%88%D8%B1" target="_blank" class="btn-contact">تواصل معنا</a>
+  </div>
+
+  <!-- نافذة تسجيل الدخول المنبثقة -->
+  <div class="modal-login" id="login-modal">
+    <div class="modal-header">
+      <h3>تسجيل الدخول</h3>
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    </div>
+    
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>البريد الإلكتروني / رقم الهاتف *</label>
+        <input type="text" id="login-input" class="form-control" placeholder="أدخل بريدك أو رقمك" required>
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور *</label>
+        <input type="password" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn-pink" style="margin-top: 10px;">دخول</button>
+    </form>
+  </div>
+
+  <!-- الهيدر الرئيسي -->
+  <header>
+    <div class="nav-right">
+      <button class="icon-btn" onclick="openSidebar()">☰</button>
+      <button class="icon-btn" onclick="showView('cart-view')">
+        🛒
+        <span class="cart-badge" id="cart-count">0</span>
+      </button>
+    </div>
+    <div class="logo" onclick="showView('shop-view')" style="cursor: pointer;">
+      <img src="images/logo.jpeg" alt="Logo">
+    </div>
+  </header>
+
+  <!-- 1. صفحة المتجر الرئيسية -->
+  <div id="shop-view" class="view-section active">
+    <div class="categories">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">الكل</button>
+      <button class="cat-btn" onclick="filterCategory('natural', this)">ورد طبيعي</button>
+      <button class="cat-btn" onclick="filterCategory('bouquets', this)">بوكيهات جاهزة</button>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+      <!-- يتم العرض تلقائياً عبر JS -->
+    </div>
+  </div>
+
+  <!-- 2. صفحة تفاصيل المنتج -->
+  <div id="product-detail-view" class="view-section">
+    <img id="detail-img" class="product-detail-img" src="" alt="">
+    <h2 id="detail-name" class="detail-title"></h2>
+    <div id="detail-price" class="detail-price"></div>
+
+    <div class="qty-picker">
+      <button onclick="changeQty(-1)">-</button>
+      <span id="qty-val">1</span>
+      <button onclick="changeQty(1)">+</button>
+    </div>
+
+    <button class="btn-pink" onclick="addToCart()">🛒 إضافة إلى عربة التسوق</button>
+    <button class="btn-outline-pink" onclick="showToast('تمت الإضافة إلى قائمة الأمنيات!')">♡ أضف إلى قائمة الأمنيات</button>
+  </div>
+
+  <!-- 3. صفحة سلة التسوق -->
+  <div id="cart-view" class="view-section">
+    <div class="breadcrumb">
+      <span class="active">الطلب</span> &lt;
+      <span>العنوان</span> &lt;
+      <span>الدفع</span>
+    </div>
+
+    <h2 style="text-align: center; margin-bottom: 20px;">ملخص الطلب</h2>
+
+    <div id="cart-content">
+      <!-- تعرض عناصر السلة أو الرسالة الخالية -->
+    </div>
+  </div>
+
+  <!-- 4. صفحة العنوان والدفع -->
+  <div id="checkout-view" class="view-section">
+    <div class="breadcrumb">
+      <span>الطلب</span> &lt;
+      <span class="active">العنوان</span> &lt;
+      <span>الدفع</span>
+    </div>
+
+    <h2 style="margin-bottom: 15px;">عنوان جديد</h2>
+
+    <div class="form-group">
+      <label>اسمك *</label>
+      <input type="text" id="address-name" class="form-control" placeholder="الاسم الكامل" required>
+    </div>
+    <div class="form-group">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="address-email" class="form-control" placeholder="example@gmail.com">
+    </div>
+    <div class="form-group">
+      <label>رقم الهاتف *</label>
+      <input type="text" id="address-phone" class="form-control" value="+20" required>
+    </div>
+    <div class="form-group">
+      <label>الشارع والرقم *</label>
+      <input type="text" id="address-street" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>شقة، جناح، إلخ...</label>
+      <input type="text" id="address-apt" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>المدينة *</label>
+      <input type="text" id="address-city" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label>رمز Zip</label>
+      <input type="text" id="address-zip" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>الدولة *</label>
+      <select id="address-country" class="form-control">
+        <option>مصر</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>الولاية/المنطقة</label>
+      <select id="address-state" class="form-control">
+        <option>Giza</option>
+        <option>Cairo</option>
+      </select>
+    </div>
+
+    <!-- معلومات التوصيل والدفع عند التأكيد -->
+    <div style="background-color: #fff3f5; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid var(--primary-dark);">
+      <p style="font-size: 0.85rem; color: #333; margin-bottom: 5px;"><strong>🚚 التوصيل:</strong> سيتم إرسال تفاصيل طلبك مباشرة عبر الواتساب لتأكيد الموعد والعنوان.</p>
+      <p style="font-size: 0.85rem; color: #333;"><strong>💳 معلومات الدفع:</strong></p>
+      <p style="font-size: 0.8rem; color: #555;">• فودافون كاش (Vodafone Cash): <a href="tel:+201100606022" style="color:#333;">01100606022</a></p>
+      <p style="font-size: 0.8rem; color: #555;">• إنستا باي (InstaPay): <a href="tel:+20114928996" style="color:#333;">0114928996</a></p>
+    </div>
+
+    <button class="btn-pink" onclick="processOrder()">إرسال الطلب عبر الواتساب ›</button>
+    <p style="text-align: center; margin-top: 10px;">
+      <a href="#" onclick="showView('cart-view')" style="color: #e91e63; text-decoration: none;">‹ العودة إلى عربة التسوق</a>
+    </p>
+  </div>
+
+  <!-- 5. صفحة تأكيد نجاح الطلب -->
+  <div id="success-view" class="view-section" style="text-align: center; padding: 40px 15px;">
+    <div style="font-size: 4rem; color: #4CAF50; margin-bottom: 15px;">🎉</div>
+    <h2 style="color: #333; margin-bottom: 10px;">تم إرسال طلبك بنجاح!</h2>
+    <p style="color: #666; font-size: 1rem; line-height: 1.6; margin-bottom: 25px;">
+      جارٍ فتح الواتساب لإرسال كافة تفاصيل طلبك لتأكيد الشحن والتسليم.
+    </p>
+    
+    <button class="btn-pink" onclick="resetAndGoHome()" style="max-width: 250px; margin: 0 auto;">
+      العودة للمتجر
+    </button>
+  </div>
+
+  <!-- الفوتر الموحد -->
+  <footer>
+    <p>📞 <a href="tel:+201100606022" class="footer-phone-link">+201100606022</a></p>
+    <p>✉ magedhassan910@gmail.com</p>
+    <a href="https://www.facebook.com/FlowershopEg?mibextid=ZbWKwL" target="_blank" class="fb-btn">f</a>
+    <p style="margin-top: 15px; font-size: 0.8rem; color: #aaa;">العَرَبِيّة | English (US)</p>
+    <p style="font-size: 0.75rem; color: #888;">حقوق الطبع والنشر © flowershop</p>
+  </footer>
+
+  <!-- السكريبت المباشر JS -->
+  <script>
+    // دالة إظهار الإشعارات العائمة
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      
+      toastText.innerText = message;
+      toast.classList.add('show');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // المنتجات
+    const products = [
+      { id: 1, name: "وردة حمراء", price: 50, category: "natural", img: "images/red rose.jpg" },
+      { id: 2, name: "وردة بيضاء", price: 50, category: "natural", img: "images/with rose.jpg" },
+      { id: 3, name: "10 وردت توليب", price: 1500, category: "natural", img: "images/WhatsApp Image 2026-07-23 at 5.39.36 PM.jpeg" },
+      { id: 4, name: "ليلي", price: 400, category: "natural", img: "images/WhatsApp Image 2026-07-23 at 5.38.21 PM.jpeg" },
+      { id: 5, name: "بوكيه جاهز", price: 5000, category: "bouquets", img: "images/ad.jpeg" },
+      { id: 6, name: "بوكيه جاهز", price: 1400, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.47.48 PM.jpeg" },
+      { id: 7, name: "بوكيه جاهز", price: 900, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.49.15 PM.jpeg" },
+      { id: 8, name: "تلات بوكيهات جاهزين", price: 12000, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.33.40 PM.jpeg" },
+      { id: 9, name: "بوكيه جاهز", price: 1300, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.22.01 PM.jpeg" },
+      { id: 10, name: "بوكيه جاهز", price: 600, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.22.44 PM.jpeg" },
+      { id: 11, name: "بوكيه جاهز", price: 2000, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.23.17 PM.jpeg" },
+      { id: 12, name: "بوكيه جاهز", price: 600, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.24.07 PM.jpeg" },
+      { id: 13, name: "بوكيه جاهز", price: 600, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.25.05 PM.jpeg" },
+      { id: 14, name: "بوكيه جاهز", price: 2500, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.27.00 PM.jpeg" },
+      { id: 15, name: "بوكيه جاهز", price: 5000, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.27.37 PM.jpeg" },
+      { id: 16, name: "بوكيه جاهز", price: 1000, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.28.31 PM.jpeg" },
+      { id: 17, name: "بوكيه جاهز", price: 400, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.30.48 PM.jpeg" },
+      { id: 18, name: "بوكيه جاهز", price: 5000, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.31.56 PM.jpeg" },
+      { id: 19, name: "بوكيه جاهز", price: 1200, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.37.44 PM.jpeg" },
+      { id: 20, name: "بوكيه جاهز", price: 850, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.39.16 PM.jpeg" },
+      { id: 21, name: "بوكيه جاهز", price: 1500, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.41.27 PM.jpeg" },
+      { id: 22, name: "بوكيه جاهز", price: 500, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.42.57 PM.jpeg" },
+      { id: 23, name: "بوكيه جاهز", price: 850, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.44.39 PM.jpeg" },
+      { id: 24, name: "بوكيه جاهز", price: 1700, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.46.50 PM.jpeg" },
+      { id: 25, name: "بوكيه جاهز", price: 1400, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.50.19 PM.jpeg" },
+      { id: 26, name: "بوكيه جاهز", price: 5000, category: "bouquets", img: "images/WhatsApp Image 2026-07-23 at 6.48.25 PM.jpeg" },
+      { id: 27, name: "بوكيه جاهز", price: 4000, category: "bouquets", img: "images/احمر ليلي.jpeg" }
+    ];
+
+    let selectedProduct = null;
+    let selectedQty = 1;
+    let cart = [];
+
+    // التبديل بين الصفحات
+    function showView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+      window.scrollTo(0,0);
+    }
+
+    // فتح وإغلاق القائمة الجانبية
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('active');
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('login-modal').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+    }
+
+    // فتح وإغلاق نافذة تسجيل الدخول
+    function openLoginModal() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('login-modal').classList.add('active');
+      document.getElementById('overlay').classList.add('active');
+    }
+
+    function closeLoginModal() {
+      document.getElementById('login-modal').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+    }
+
+    // معالجة تسجيل الدخول
+    function handleLogin(event) {
+      event.preventDefault();
+      const loginBtn = document.getElementById('btn-login-sidebar');
+      loginBtn.innerText = `👤 أهلاً بك`;
+      loginBtn.style.backgroundColor = '#f0f0f0';
+      loginBtn.onclick = null;
+
+      closeLoginModal();
+      showToast('تم تسجيل الدخول بنجاح!');
+    }
+
+    // عرض المنتجات في الشبكة
+    function renderProducts(items) {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
+      items.forEach(p => {
+        grid.innerHTML += `
+          <div class="product-card" onclick="openProductDetail(${p.id})">
+            <img src="${p.img}" alt="${p.name}">
+            <h4>${p.name}</h4>
+            <div class="price">LE ${p.price.toLocaleString('en-US')}.00</div>
+          </div>
+        `;
+      });
+    }
+
+    // الفلترة
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if(cat === 'all') renderProducts(products);
+      else renderProducts(products.filter(p => p.category === cat));
+    }
+
+    // فتح صفحة تفاصيل المنتج
+    function openProductDetail(id) {
+      selectedProduct = products.find(p => p.id === Number(id));
+      selectedQty = 1;
+      
+      if (selectedProduct) {
+        document.getElementById('detail-img').src = selectedProduct.img;
+        document.getElementById('detail-name').innerText = selectedProduct.name;
+        document.getElementById('detail-price').innerText = `LE ${selectedProduct.price.toLocaleString('en-US')}.00`;
+        document.getElementById('qty-val').innerText = selectedQty;
+        showView('product-detail-view');
+      }
+    }
+
+    // تغيير الكمية في صفحة التفاصيل
+    function changeQty(amt) {
+      if(selectedQty + amt >= 1) {
+        selectedQty += amt;
+        document.getElementById('qty-val').innerText = selectedQty;
+      }
+    }
+
+    // إضافة إلى السلة
+    function addToCart() {
+      if (!selectedProduct) return;
+
+      const existingIndex = cart.findIndex(item => item.product.id === selectedProduct.id);
+      
+      if (existingIndex > -1) {
+        cart[existingIndex].qty += selectedQty;
+      } else {
+        cart.push({ product: selectedProduct, qty: selectedQty });
+      }
+
+      updateCartUI();
+      showToast('تمت الإضافة إلى العربة بنجاح!');
+      showView('cart-view');
+    }
+
+    // تغيير الكمية من السلة
+    function updateCartItemQty(index, change) {
+      if (cart[index]) {
+        cart[index].qty += change;
+        if (cart[index].qty <= 0) {
+          cart.splice(index, 1);
+        }
+        updateCartUI();
+      }
+    }
+
+    // حذف عنصر من السلة
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+      showToast('تم إزالة العنصر من السلة');
+    }
+
+    // تحديث واجهة السلة والعداد
+    function updateCartUI() {
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').innerText = totalCount;
+
+      const cartContent = document.getElementById('cart-content');
+
+      if (cart.length === 0) {
+        cartContent.innerHTML = `
+          <div style="text-align: center; padding: 40px 0;">
+            <div style="font-size: 3rem; color: #ccc;">🛒</div>
+            <h3 style="margin-top: 10px;">عربة التسوق الخاصة بك فارغة!</h3>
+            <button class="btn-pink" style="margin-top: 20px; width: 140px;" onclick="showView('shop-view')">المتجر</button>
+          </div>
+        `;
+        return;
+      }
+
+      let itemsHTML = '';
+      let subtotal = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.product.price * item.qty;
+        subtotal += itemTotal;
+
+        itemsHTML += `
+          <div class="cart-item">
+            <img src="${item.product.img}" alt="${item.product.name}">
+            <div style="flex: 1; margin: 0 10px;">
+              <h4 style="font-size:0.95rem;">${item.product.name}</h4>
+              <p style="font-size: 0.85rem; color: #666;">LE ${item.product.price.toLocaleString('en-US')}.00</p>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 6px; border: 1px solid #ddd; border-radius: 15px; padding: 2px 8px;">
+              <button onclick="updateCartItemQty(${index}, -1)" style="border:none; background:none; cursor:pointer; font-weight:bold;">-</button>
+              <span style="font-size:0.9rem; font-weight:bold;">${item.qty}</span>
+              <button onclick="updateCartItemQty(${index}, 1)" style="border:none; background:none; cursor:pointer; font-weight:bold;">+</button>
+            </div>
+
+            <button onclick="removeItem(${index})" style="border:none; background:none; color:red; cursor:pointer; margin-right: 10px;">🗑</button>
+          </div>
+        `;
+      });
+
+      cartContent.innerHTML = `
+        ${itemsHTML}
+        <div class="cart-summary">
+          <div class="summary-row"><span>التوصيل</span><span>-</span></div>
+          <div class="summary-row"><span>الناتج الفرعي</span><span>LE ${subtotal.toLocaleString('en-US')}.00</span></div>
+          <div class="summary-row" style="font-weight: bold; font-size: 1.1rem; border-top: 1px solid #eee; padding-top: 10px;">
+            <span>الإجمالي</span><span>LE ${subtotal.toLocaleString('en-US')}.00</span>
+          </div>
+        </div>
+        <button class="btn-pink" style="margin-top: 15px;" onclick="showView('checkout-view')">الدفع والخروج ›</button>
+        <p style="text-align: center; margin-top: 10px;">
+          <a href="#" onclick="showView('shop-view')" style="color: #e91e63; text-decoration: none;">‹ الاستمرار في التسوق</a>
+        </p>
+      `;
+    }
+
+    // --- حفظ واسترجاع العنوان عبر localStorage ---
+    function saveAddress() {
+      const addressData = {
+        name: document.getElementById('address-name').value,
+        email: document.getElementById('address-email').value,
+        phone: document.getElementById('address-phone').value,
+        street: document.getElementById('address-street').value,
+        apt: document.getElementById('address-apt').value,
+        city: document.getElementById('address-city').value,
+        zip: document.getElementById('address-zip').value,
+        country: document.getElementById('address-country').value,
+        state: document.getElementById('address-state').value
+      };
+
+      localStorage.setItem('savedAddress', JSON.stringify(addressData));
+      return addressData;
+    }
+
+    function loadSavedAddress() {
+      const savedData = localStorage.getItem('savedAddress');
+      if (savedData) {
+        const address = JSON.parse(savedData);
+        if (address.name) document.getElementById('address-name').value = address.name;
+        if (address.email) document.getElementById('address-email').value = address.email;
+        if (address.phone) document.getElementById('address-phone').value = address.phone;
+        if (address.street) document.getElementById('address-street').value = address.street;
+        if (address.apt) document.getElementById('address-apt').value = address.apt;
+        if (address.city) document.getElementById('address-city').value = address.city;
+        if (address.zip) document.getElementById('address-zip').value = address.zip;
+        if (address.country) document.getElementById('address-country').value = address.country;
+        if (address.state) document.getElementById('address-state').value = address.state;
+      }
+    }
+
+    // دالة إتمام الطلب وتوجيه العميل إلى الواتساب
+    function processOrder() {
+      const name = document.getElementById('address-name').value.trim();
+      const phone = document.getElementById('address-phone').value.trim();
+      const street = document.getElementById('address-street').value.trim();
+      const city = document.getElementById('address-city').value.trim();
+
+      if (!name || !phone || !street || !city) {
+        alert('يرجى ملء جميع الحقول المطلوبة (الاسم، رقم الهاتف، الشارع، والمدينة)');
+        return;
+      }
+
+      if (cart.length === 0) {
+        alert('عربة التسوق فارغة!');
+        return;
+      }
+
+      const addressData = saveAddress();
+
+      // بناء نص الطلب للواتساب
+      let orderItemsText = "";
+      let totalAmount = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.product.price * item.qty;
+        totalAmount += itemTotal;
+        orderItemsText += `${index + 1}. ${item.product.name} (الكمية: ${item.qty}) - LE ${itemTotal}\n`;
+      });
+
+      const whatsappMessage = `🌸 *طلب جديد من متجر الزهور* 🌸\n\n` +
+        `👤 *الاسم:* ${addressData.name}\n` +
+        `📞 *رقم الهاتف:* ${addressData.phone}\n` +
+        `📍 *العنوان:* ${addressData.street}، ${addressData.apt ? addressData.apt + '، ' : ''}${addressData.city} (${addressData.state})\n\n` +
+        `🛒 *المنتجات المطلوبة:*\n${orderItemsText}\n` +
+        `💰 *الإجمالي:* LE ${totalAmount.toLocaleString('en-US')}.00\n\n` +
+        `يرجى تأكيد الطلب وتحديد موعد التسليم.`;
+
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      const whatsappURL = `https://wa.me/201100606022?text=${encodedMessage}`;
+
+      // مسح السلة بعد تجهيز الرسالة
+      cart = [];
+      updateCartUI();
+
+      // إظهار صفحة النجاح ثم فتح الواتساب
+      showView('success-view');
+      window.open(whatsappURL, '_blank');
+    }
+
+    // دالة العودة للمتجر
+    function resetAndGoHome() {
+      showView('shop-view');
+    }
+
+    // التشغيل عند البدء
+    renderProducts(products);
+    updateCartUI();
+    loadSavedAddress();
+  </script>
+
+</body> 
+</html>
