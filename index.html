@@ -488,11 +488,10 @@
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     <input type="text" class="search-input" placeholder="...Search">
     <div class="sidebar-phone">
-      📞 <a href="tel:+201066106283" class="phone-link">+201066106283</a>
+      📞 <a href="tel:+2011006022" class="phone-link">+2011006022</a>
     </div>
     <button class="btn-login" id="btn-login-sidebar" onclick="openLoginModal()">تسجيل الدخول</button>
-    <!-- تم تعديل زر تواصل معنا ليفتح واتساب مباشرة -->
-    <a href="https://wa.me/201066106283?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D9%85%D8%B9%D9%83%D9%85%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D8%A7%D9%84%D8%B2%D9%87%D9%88%D8%B1" target="_blank" class="btn-contact">تواصل معنا</a>
+    <a href="https://wa.me/2011006022?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D9%85%D8%B9%D9%83%D9%85%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D8%A7%D9%84%D8%B2%D9%87%D9%88%D8%B1" target="_blank" class="btn-contact">تواصل معنا</a>
   </div>
 
   <!-- نافذة تسجيل الدخول المنبثقة -->
@@ -586,19 +585,19 @@
 
     <div class="form-group">
       <label>اسمك *</label>
-      <input type="text" id="address-name" class="form-control" placeholder="الاسم الكامل">
+      <input type="text" id="address-name" class="form-control" placeholder="الاسم الكامل" required>
     </div>
     <div class="form-group">
-      <label>البريد الإلكتروني *</label>
+      <label>البريد الإلكتروني</label>
       <input type="email" id="address-email" class="form-control" placeholder="example@gmail.com">
     </div>
     <div class="form-group">
       <label>رقم الهاتف *</label>
-      <input type="text" id="address-phone" class="form-control" value="+20">
+      <input type="text" id="address-phone" class="form-control" value="+20" required>
     </div>
     <div class="form-group">
       <label>الشارع والرقم *</label>
-      <input type="text" id="address-street" class="form-control">
+      <input type="text" id="address-street" class="form-control" required>
     </div>
     <div class="form-group">
       <label>شقة، جناح، إلخ...</label>
@@ -606,10 +605,10 @@
     </div>
     <div class="form-group">
       <label>المدينة *</label>
-      <input type="text" id="address-city" class="form-control">
+      <input type="text" id="address-city" class="form-control" required>
     </div>
     <div class="form-group">
-      <label>رمز Zip *</label>
+      <label>رمز Zip</label>
       <input type="text" id="address-zip" class="form-control">
     </div>
     <div class="form-group">
@@ -628,13 +627,13 @@
 
     <!-- معلومات التوصيل والدفع عند التأكيد -->
     <div style="background-color: #fff3f5; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid var(--primary-dark);">
-      <p style="font-size: 0.85rem; color: #333; margin-bottom: 5px;"><strong>🚚 التوصيل:</strong> بالنسبة للتوصيل، يرجى التواصل معنا لتأكيد الموعد والعنوان.</p>
+      <p style="font-size: 0.85rem; color: #333; margin-bottom: 5px;"><strong>🚚 التوصيل:</strong> سيتم إرسال تفاصيل طلبك مباشرة عبر الواتساب لتأكيد الموعد والعنوان.</p>
       <p style="font-size: 0.85rem; color: #333;"><strong>💳 معلومات الدفع:</strong></p>
-      <p style="font-size: 0.8rem; color: #555;">• فودافون كاش (Vodafone Cash): <a href="tel:+201066106283" style="color:#333;">01066106283</a></p>
+      <p style="font-size: 0.8rem; color: #555;">• فودافون كاش (Vodafone Cash): <a href="tel:+2011006022" style="color:#333;">011006022</a></p>
       <p style="font-size: 0.8rem; color: #555;">• إنستا باي (InstaPay): <a href="tel:+20114928996" style="color:#333;">0114928996</a></p>
     </div>
 
-    <button class="btn-pink" onclick="processOrder()">تأكيد ›</button>
+    <button class="btn-pink" onclick="processOrder()">إرسال الطلب عبر الواتساب ›</button>
     <p style="text-align: center; margin-top: 10px;">
       <a href="#" onclick="showView('cart-view')" style="color: #e91e63; text-decoration: none;">‹ العودة إلى عربة التسوق</a>
     </p>
@@ -645,7 +644,7 @@
     <div style="font-size: 4rem; color: #4CAF50; margin-bottom: 15px;">🎉</div>
     <h2 style="color: #333; margin-bottom: 10px;">تم إرسال طلبك بنجاح!</h2>
     <p style="color: #666; font-size: 1rem; line-height: 1.6; margin-bottom: 25px;">
-      سنقوم بالتواصل معك قريباً لتأكيد تفاصيل التوصيل والطلب.
+      جارٍ فتح الواتساب لإرسال كافة تفاصيل طلبك لتأكيد الشحن والتسليم.
     </p>
     
     <button class="btn-pink" onclick="resetAndGoHome()" style="max-width: 250px; margin: 0 auto;">
@@ -655,7 +654,7 @@
 
   <!-- الفوتر الموحد -->
   <footer>
-    <p>📞 <a href="tel:+201066106283" class="footer-phone-link">+201066106283</a></p>
+    <p>📞 <a href="tel:+2011006022" class="footer-phone-link">+2011006022</a></p>
     <p>✉ magedhassan910@gmail.com</p>
     <a href="https://www.facebook.com/FlowershopEg?mibextid=ZbWKwL" target="_blank" class="fb-btn">f</a>
     <p style="margin-top: 15px; font-size: 0.8rem; color: #aaa;">العَرَبِيّة | English (US)</p>
@@ -676,7 +675,7 @@
       clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => {
         toast.classList.remove('show');
-      }, 3000); // يختفي تلقائياً بعد 3 ثوانٍ
+      }, 3000);
     }
 
     // المنتجات
@@ -912,6 +911,7 @@
       };
 
       localStorage.setItem('savedAddress', JSON.stringify(addressData));
+      return addressData;
     }
 
     function loadSavedAddress() {
@@ -930,12 +930,53 @@
       }
     }
 
-    // دالة إتمام الطلب وعرض صفحة النجاح
+    // دالة إتمام الطلب وتوجيه العميل إلى الواتساب
     function processOrder() {
-      saveAddress();
+      const name = document.getElementById('address-name').value.trim();
+      const phone = document.getElementById('address-phone').value.trim();
+      const street = document.getElementById('address-street').value.trim();
+      const city = document.getElementById('address-city').value.trim();
+
+      if (!name || !phone || !street || !city) {
+        alert('يرجى ملء جميع الحقول المطلوبة (الاسم، رقم الهاتف، الشارع، والمدينة)');
+        return;
+      }
+
+      if (cart.length === 0) {
+        alert('عربة التسوق فارغة!');
+        return;
+      }
+
+      const addressData = saveAddress();
+
+      // بناء نص الطلب للواتساب
+      let orderItemsText = "";
+      let totalAmount = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.product.price * item.qty;
+        totalAmount += itemTotal;
+        orderItemsText += `${index + 1}. ${item.product.name} (الكمية: ${item.qty}) - LE ${itemTotal}\n`;
+      });
+
+      const whatsappMessage = `🌸 *طلب جديد من متجر الزهور* 🌸\n\n` +
+        `👤 *الاسم:* ${addressData.name}\n` +
+        `📞 *رقم الهاتف:* ${addressData.phone}\n` +
+        `📍 *العنوان:* ${addressData.street}، ${addressData.apt ? addressData.apt + '، ' : ''}${addressData.city} (${addressData.state})\n\n` +
+        `🛒 *المنتجات المطلوبة:*\n${orderItemsText}\n` +
+        `💰 *الإجمالي:* LE ${totalAmount.toLocaleString('en-US')}.00\n\n` +
+        `يرجى تأكيد الطلب وتحديد موعد التسليم.`;
+
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      const whatsappURL = `https://wa.me/2011006022?text=${encodedMessage}`;
+
+      // مسح السلة بعد تجهيز الرسالة
       cart = [];
       updateCartUI();
+
+      // إظهار صفحة النجاح ثم فتح الواتساب
       showView('success-view');
+      window.open(whatsappURL, '_blank');
     }
 
     // دالة العودة للمتجر
